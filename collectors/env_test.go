@@ -1,27 +1,12 @@
 package collectors_test
 
 import (
-	"testing"
-
 	"github.com/ajaypanthagani/sugabred/collectors"
 	commandmock "github.com/ajaypanthagani/sugabred/commands/mocks"
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
-
-type MockEnvReader struct {
-	Vars []string
-}
-
-func (m MockEnvReader) Environ() []string {
-	return m.Vars
-}
-
-func TestEnv(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "Env Collector Suite")
-}
 
 var _ = Describe("Env Collector", func() {
 	var (

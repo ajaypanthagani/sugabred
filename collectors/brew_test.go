@@ -3,7 +3,6 @@ package collectors_test
 import (
 	"encoding/json"
 	"fmt"
-	"testing"
 
 	"github.com/ajaypanthagani/sugabred/collectors"
 	commandmock "github.com/ajaypanthagani/sugabred/commands/mocks"
@@ -12,11 +11,6 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
-
-func TestBrew(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "Brew Collector Suite")
-}
 
 var _ = Describe("Brew Collector", func() {
 	var (
