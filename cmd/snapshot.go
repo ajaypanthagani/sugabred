@@ -6,6 +6,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/ajaypanthagani/sugabred/collectors"
+	"github.com/ajaypanthagani/sugabred/commands"
+	"github.com/ajaypanthagani/sugabred/output"
 	"github.com/spf13/cobra"
 )
 
@@ -29,10 +32,41 @@ var snapshotCmd = &cobra.Command{
 
 	Use this command to create a portable, versionable snapshot of your dev environment.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("snapshot called")
+		fmt.Println("🔍 Collecting snapshot...")
+		snap, err := devEnvCollector.CollectAll()
+		if err != nil {
+			fmt.Println("❌ Failed to generate snapshot: %w", err)
+			return
+		}
+
+		err = output.WriteSnapshotToFile(snap, "sugabred.snapshot.yaml")
+		if err != nil {
+			fmt.Println("❌ Failed to write snapshot: %w", err)
+			return
+		}
+
+		fmt.Println("✅ Snapshot written to sugabred.snapshot.yaml")
 	},
 }
 
+var (
+	brewCommander   commands.BrewCommander
+	envCommander    commands.EnvCommander
+	brewCollector   collectors.BrewCollector
+	envCollector    collectors.EnvCollector
+	devEnvCollector collectors.DevEnvCollector
+)
+
+func setup() {
+	brewCommander = commands.NewBrewCommander()
+	envCommander = commands.NewEnvCommander()
+
+	brewCollector = collectors.NewBrewCollector(brewCommander)
+	envCollector = collectors.NewEnvCollector(envCommander)
+	devEnvCollector = collectors.NewDevEnvCollector(brewCollector, envCollector)
+}
+
 func init() {
+	setup()
 	rootCmd.AddCommand(snapshotCmd)
 }
