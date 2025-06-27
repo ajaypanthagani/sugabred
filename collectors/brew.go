@@ -28,7 +28,9 @@ type brewCollector struct {
 
 func (c *brewCollector) CollectPackages() ([]types.BrewPackage, error) {
 	names, err := c.cmd.RunBrewListFormula()
+
 	if err != nil {
+		fmt.Printf("Error retrieving brew packages: %s", err.Error())
 		return nil, err
 	}
 
@@ -39,15 +41,22 @@ func (c *brewCollector) CollectPackages() ([]types.BrewPackage, error) {
 			continue
 		}
 
-		fmt.Printf("Processing package: %s\n", name)
+		fmt.Printf("Processing brew package: %s\n", name)
 
 		out, err := c.cmd.RunBrewInfoJSON(name, false)
 		if err != nil {
+			fmt.Printf("Couldn't process brew package: %s, received err: %s", name, err.Error())
 			continue
 		}
 
 		var info types.BrewPackageInfo
-		if err := json.Unmarshal(out, &info); err != nil || len(info.Formulae) == 0 {
+		if err := json.Unmarshal(out, &info); err != nil {
+			fmt.Printf("Couldn't unmarshal brew package info: %s for package: %s, received err: %s", out, name, err.Error())
+			continue
+		}
+
+		if len(info.Formulae) == 0 {
+			fmt.Printf("Couldn't process brew package: %s, received empty formula list", name)
 			continue
 		}
 
@@ -63,6 +72,7 @@ func (c *brewCollector) CollectCasks() ([]types.BrewCask, error) {
 	names, err := c.cmd.RunBrewListCask()
 
 	if err != nil {
+		fmt.Printf("Error retrieving brew casks: %s", err.Error())
 		return nil, err
 	}
 
@@ -73,15 +83,22 @@ func (c *brewCollector) CollectCasks() ([]types.BrewCask, error) {
 			continue
 		}
 
-		fmt.Printf("Processing cask: %s\n", token)
+		fmt.Printf("Processing brew cask: %s\n", token)
 
 		out, err := c.cmd.RunBrewInfoJSON(token, true)
 		if err != nil {
+			fmt.Printf("Couldn't process brew cask: %s, received err: %s", token, err.Error())
 			continue
 		}
 
 		var info types.BrewCaskInfo
-		if err := json.Unmarshal(out, &info); err != nil || len(info.Casks) == 0 {
+		if err := json.Unmarshal(out, &info); err != nil {
+			fmt.Printf("Couldn't unmarshal brew cask package info: %s for cask: %s, received err: %s", out, token, err.Error())
+			continue
+		}
+
+		if len(info.Casks) == 0 {
+			fmt.Printf("Couldn't process brew cask: %s, received empty formula list", token)
 			continue
 		}
 

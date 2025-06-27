@@ -32,12 +32,14 @@ func (c *devEnvCollector) CollectAll() (*types.Snapshot, error) {
 	fmt.Println("Collecting homebrew packages...")
 	brewPkgs, err := c.brewCollector.CollectPackages()
 	if err != nil {
+		fmt.Printf("Error collecting brew packages: %s", err.Error())
 		return nil, err
 	}
 
 	fmt.Println("Collecting homebrew casks...")
 	brewCasks, err := c.brewCollector.CollectCasks()
 	if err != nil {
+		fmt.Printf("Error collecting brew casks: %s", err.Error())
 		return nil, err
 	}
 
