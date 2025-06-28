@@ -11,31 +11,31 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockCollector is a mock of Collector interface.
-type MockCollector struct {
+// MockDevEnvCollector is a mock of DevEnvCollector interface.
+type MockDevEnvCollector struct {
 	ctrl     *gomock.Controller
-	recorder *MockCollectorMockRecorder
+	recorder *MockDevEnvCollectorMockRecorder
 }
 
-// MockCollectorMockRecorder is the mock recorder for MockCollector.
-type MockCollectorMockRecorder struct {
-	mock *MockCollector
+// MockDevEnvCollectorMockRecorder is the mock recorder for MockDevEnvCollector.
+type MockDevEnvCollectorMockRecorder struct {
+	mock *MockDevEnvCollector
 }
 
-// NewMockCollector creates a new mock instance.
-func NewMockCollector(ctrl *gomock.Controller) *MockCollector {
-	mock := &MockCollector{ctrl: ctrl}
-	mock.recorder = &MockCollectorMockRecorder{mock}
+// NewMockDevEnvCollector creates a new mock instance.
+func NewMockDevEnvCollector(ctrl *gomock.Controller) *MockDevEnvCollector {
+	mock := &MockDevEnvCollector{ctrl: ctrl}
+	mock.recorder = &MockDevEnvCollectorMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockCollector) EXPECT() *MockCollectorMockRecorder {
+func (m *MockDevEnvCollector) EXPECT() *MockDevEnvCollectorMockRecorder {
 	return m.recorder
 }
 
 // CollectAll mocks base method.
-func (m *MockCollector) CollectAll() (*types.Snapshot, error) {
+func (m *MockDevEnvCollector) CollectAll() (*types.Snapshot, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CollectAll")
 	ret0, _ := ret[0].(*types.Snapshot)
@@ -44,7 +44,7 @@ func (m *MockCollector) CollectAll() (*types.Snapshot, error) {
 }
 
 // CollectAll indicates an expected call of CollectAll.
-func (mr *MockCollectorMockRecorder) CollectAll() *gomock.Call {
+func (mr *MockDevEnvCollectorMockRecorder) CollectAll() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CollectAll", reflect.TypeOf((*MockCollector)(nil).CollectAll))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CollectAll", reflect.TypeOf((*MockDevEnvCollector)(nil).CollectAll))
 }

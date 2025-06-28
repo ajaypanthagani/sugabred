@@ -52,18 +52,24 @@ var snapshotCmd = &cobra.Command{
 var (
 	brewCommander   commands.BrewCommander
 	envCommander    commands.EnvCommander
+	shellCommander  commands.ShellCommander
+	fileCommander   commands.FileCommander
 	brewCollector   collectors.BrewCollector
 	envCollector    collectors.EnvCollector
 	devEnvCollector collectors.DevEnvCollector
+	shellCollector  collectors.ShellCollector
 )
 
 func setup() {
 	brewCommander = commands.NewBrewCommander()
 	envCommander = commands.NewEnvCommander()
+	shellCommander = commands.NewShellCommander()
+	fileCommander = commands.NewFileCommander()
 
 	brewCollector = collectors.NewBrewCollector(brewCommander)
 	envCollector = collectors.NewEnvCollector(envCommander)
-	devEnvCollector = collectors.NewDevEnvCollector(brewCollector, envCollector)
+	shellCollector = collectors.NewShellCollector(shellCommander, fileCommander)
+	devEnvCollector = collectors.NewDevEnvCollector(brewCollector, envCollector, shellCollector)
 }
 
 func init() {

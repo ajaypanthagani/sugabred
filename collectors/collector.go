@@ -16,16 +16,18 @@ type DevEnvCollector interface {
 	CollectAll() (*types.Snapshot, error)
 }
 
-func NewDevEnvCollector(brewCollector BrewCollector, envCollector EnvCollector) DevEnvCollector {
+func NewDevEnvCollector(brewCollector BrewCollector, envCollector EnvCollector, shellCollector ShellCollector) DevEnvCollector {
 	return &devEnvCollector{
-		brewCollector: brewCollector,
-		envCollector:  envCollector,
+		brewCollector:  brewCollector,
+		envCollector:   envCollector,
+		shellCollector: shellCollector,
 	}
 }
 
 type devEnvCollector struct {
-	brewCollector BrewCollector
-	envCollector  EnvCollector
+	brewCollector  BrewCollector
+	envCollector   EnvCollector
+	shellCollector ShellCollector
 }
 
 func (c *devEnvCollector) CollectAll() (*types.Snapshot, error) {
@@ -40,6 +42,13 @@ func (c *devEnvCollector) CollectAll() (*types.Snapshot, error) {
 	brewCasks, err := c.brewCollector.CollectCasks()
 	if err != nil {
 		fmt.Printf("Error collecting brew casks: %s", err.Error())
+		return nil, err
+	}
+
+	fmt.Println("Collecting shell configs...")
+	shellConfigs, err := c.shellCollector.CollectShell()
+	if err != nil {
+		fmt.Printf("Error collecting shell configs: %s", err.Error())
 		return nil, err
 	}
 
@@ -60,6 +69,7 @@ func (c *devEnvCollector) CollectAll() (*types.Snapshot, error) {
 		Homebrew:  brewPkgs,
 		Casks:     brewCasks,
 		EnvVars:   envVars,
+		Shell:     shellConfigs,
 	}, nil
 }
 

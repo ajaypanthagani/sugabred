@@ -7,4 +7,5 @@ type Snapshot struct {
 	Homebrew  []BrewPackage     `yaml:"homebrew_packages"`
 	Casks     []BrewCask        `yaml:"homebrew_casks"`
 	EnvVars   map[string]string `yaml:"environment_variables"`
+	Shell     *ShellSnapshot    `yaml:"shell"`
 }

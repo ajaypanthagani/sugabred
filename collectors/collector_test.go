@@ -18,9 +18,10 @@ func TestCollector(t *testing.T) {
 
 var _ = Describe("CollectAll", func() {
 	var (
-		mockBrewCollector *collectormock.MockBrewCollector
-		mockEnvCollector  *collectormock.MockEnvCollector
-		ctrl              *gomock.Controller
+		mockBrewCollector  *collectormock.MockBrewCollector
+		mockEnvCollector   *collectormock.MockEnvCollector
+		mockShellCollector *collectormock.MockShellCollector
+		ctrl               *gomock.Controller
 	)
 
 	var (
@@ -31,7 +32,8 @@ var _ = Describe("CollectAll", func() {
 		ctrl = gomock.NewController(GinkgoT())
 		mockBrewCollector = collectormock.NewMockBrewCollector(ctrl)
 		mockEnvCollector = collectormock.NewMockEnvCollector(ctrl)
-		collector = collectors.NewDevEnvCollector(mockBrewCollector, mockEnvCollector)
+		mockShellCollector = collectormock.NewMockShellCollector(ctrl)
+		collector = collectors.NewDevEnvCollector(mockBrewCollector, mockEnvCollector, mockShellCollector)
 	})
 
 	It("should return a valid snapshot", func() {
@@ -49,12 +51,20 @@ var _ = Describe("CollectAll", func() {
 			},
 		}
 
+		shellConfig := &types.ShellSnapshot{
+			DefaultShell: "some-default-shell",
+			ActiveShell:  "some-active-shell",
+			ConfigFiles:  map[string]string{},
+			Aliases:      map[string]string{},
+		}
+
 		envValues := map[string]string{
 			"HELLO": "world",
 		}
 
 		mockBrewCollector.EXPECT().CollectPackages().Return(brewPkgs, nil)
 		mockBrewCollector.EXPECT().CollectCasks().Return(brewCasks, nil)
+		mockShellCollector.EXPECT().CollectShell().Return(shellConfig, nil)
 		mockEnvCollector.EXPECT().CollectEnvVars().Return(envValues)
 
 		snapshot, err := collector.CollectAll()
@@ -62,5 +72,6 @@ var _ = Describe("CollectAll", func() {
 		Expect(snapshot.Homebrew).To(ConsistOf(types.BrewPackage{Name: "go", Version: "1.22.1"}))
 		Expect(snapshot.Casks).To(ConsistOf(types.BrewCask{Name: "chrome", Version: "125.0"}))
 		Expect(snapshot.EnvVars).To(HaveKeyWithValue("HELLO", "world"))
+		Expect(snapshot.Shell).To(Equal(shellConfig))
 	})
 })
